@@ -15,12 +15,12 @@ const Trend = ({ type, tweetCount, subject }) => {
           <span className="text-[13px]">{tweetCount + " Tweets"}</span>
         </div>
       </button>
-      <div className="flex w-1/4 items-start justify-end mr-4 ">
+      <div className="flex w-1/4 items-start justify-end mr-4 mt-2 ">
         <button
           title="More"
-          className="flex rounded-2xl hover:bg-[rgba(29,152,140,0.3)] p-2"
+          className="flex rounded-2xl text-gray text-[14px] hover:bg-[rgba(29,155,240,0.1)] hover:text-[rgba(29,155,255,1)] p-2"
         >
-          <FontAwesomeIcon className="hover:text-primary" icon={faEllipsisH} />
+          <FontAwesomeIcon icon={faEllipsisH} />
         </button>
       </div>
     </div>

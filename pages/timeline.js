@@ -134,23 +134,23 @@ const TimeLine = () => {
                 <div className="flex flex-col w-full">
                   <Trend
                     type={"Politics-Trending"}
-                    subject={"Suleyman Soylu"}
+                    subject={"Example"}
+                    tweetCount={7.587}
+                  />
+                  <Trend
+                    type={"Sport-Trending"}
+                    subject={"Example"}
                     tweetCount={7.587}
                   />
                   <Trend
                     type={"Politics-Trending"}
-                    subject={"Suleyman Soylu"}
-                    tweetCount={7.587}
+                    subject={"#Example"}
+                    tweetCount={287}
                   />
                   <Trend
                     type={"Politics-Trending"}
-                    subject={"Suleyman Soylu"}
-                    tweetCount={7.587}
-                  />
-                  <Trend
-                    type={"Politics-Trending"}
-                    subject={"Suleyman Soylu"}
-                    tweetCount={7.587}
+                    subject={"#Example"}
+                    tweetCount={17.587}
                   />
                 </div>
                 <div className="flex justify-start w-full hover:bg-grayHover p-3">

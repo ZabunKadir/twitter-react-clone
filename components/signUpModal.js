@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { useRouter } from "next/router";
 import { Dialog } from "@headlessui/react";
 
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
@@ -27,6 +27,7 @@ export default function SignUpModal({ isOpen, onClose }) {
   const [isMonthFocus, setIsMonthFocus] = useState(false);
   const [isDayFocus, setIsDayFocus] = useState(false);
 
+  const router = useRouter();
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { user, error } = await supabase.auth.signUp({
@@ -37,6 +38,21 @@ export default function SignUpModal({ isOpen, onClose }) {
       day: formData?.day,
       year: formData?.year,
     });
+    const { data, error: updateError } = await supabase
+      .from("profiles")
+      .update({
+        name: formData?.name,
+        email: formData?.email,
+        password: formData?.password,
+      })
+      .eq("id", user.id);
+
+    if (!updateError) {
+      console.log(data);
+      router.push("/timeline");
+    } else {
+      console.log(updateError);
+    }
   };
 
   const handleChange = (e) => {

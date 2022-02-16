@@ -13,7 +13,7 @@ import {
   faPollH,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-
+import { supabase } from "../../utils/supabaseClient";
 const modalButton = (icon, titleLabel, isDisabled) => {
   return (
     <button
@@ -51,11 +51,17 @@ const TweetSend = ({ isModal, close, user, photoUrl }) => {
     showHandler();
   }, [click]);
 
-  const handleSubmit = async (e) => {
+  const sendTweet = async (e) => {
     e.preventDefault();
-    const { user, error } = await supabase.auth.signUp({
-      name: formData?.name,
+    const { data, error } = await supabase.from("tweets").insert({
+      body: formData?.tweet,
     });
+    if (error) {
+      console.log(error);
+    } else {
+      formData.tweet = "";
+      setTimeout(close, 0);
+    }
   };
 
   const handleChange = (e) => {
@@ -102,6 +108,7 @@ const TweetSend = ({ isModal, close, user, photoUrl }) => {
               name="tweet"
               className="flex w-full h-auto resize-none bg-transparent text-textColor text-[20px] ml-2 outline-none"
               onChange={handleChange}
+              value={formData?.tweet}
             ></textarea>
           </div>
           {isClicked && (
@@ -130,8 +137,9 @@ const TweetSend = ({ isModal, close, user, photoUrl }) => {
             </div>
             <div className="flex">
               <button
-                className="py-2 bg-primary text-white rounded-full h-[36px] max-w-[75px] w-[75px] hover:bg-[rgb(26,140,216)] transition duration-200 font-bold  disabled:bg-[rgba(26,140,216,0.4)] disabled:text-[rgba(255,255,255,0.4)]"
+                className="p-1 bg-primary justify-center items-center text-white rounded-full h-[36px] max-w-[75px] w-[75px] hover:bg-[rgb(26,140,216)] transition duration-200 font-bold  disabled:bg-[rgba(26,140,216,0.4)] disabled:text-[rgba(255,255,255,0.4)]"
                 disabled={formData.tweet ? false : true}
+                onClick={sendTweet}
               >
                 Tweet
               </button>

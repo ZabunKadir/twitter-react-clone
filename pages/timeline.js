@@ -1,24 +1,54 @@
 import Header from "../components/shared/header";
 import UserComponent from "../components/user";
+import Trend from "../components/shared/trend";
+import Follow from "../components/follow";
+import TweetSend from "../components/shared/tweetSend";
+import Tweet from "../components/shared/tweet";
+
+import moment from "moment";
+moment.locale("en", {
+  relativeTime: { m: "a minute", mm: "%dm", hh: "%dh" },
+});
 import { supabase } from "../utils/supabaseClient";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCog,
   faEllipsisH,
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
-import Trend from "../components/shared/trend";
-import Follow from "../components/follow";
-import TweetSend from "../components/shared/tweetSend";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
-import Tweet from "../components/shared/tweet";
 
 const TimeLine = () => {
   const [isFocusSearch, setIsFocusSearch] = useState(false);
-  const router = useRouter();
+  const [tweets, setTweets] = useState([]);
+  const [currentUser, setCurrentUser] = useState([]);
+
   const user = supabase.auth.user();
+
+  const getProfile = async () => {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("name,username")
+      .eq("id", user?.id);
+    setCurrentUser(profile);
+  };
+
+  useEffect(() => {
+    (async () => {
+      const { data: tweets, error } = await supabase
+        .from("tweets")
+        .select("*,profile:profile_id (name,username)")
+        .order("created_at", { ascending: false });
+      if (!error) {
+        setTweets(tweets);
+      }
+    })();
+    getProfile();
+  }, [tweets]);
 
   return (
     <div className="flex min-h-screen bg-black text-textColor h-full">
@@ -29,8 +59,8 @@ const TimeLine = () => {
               <Header />
               <UserComponent
                 photoUrl={"/images/default_profile.png"}
-                name={"Example"}
-                userName={"example"}
+                name={currentUser[0]?.name}
+                userName={currentUser[0]?.name}
               />
             </div>
           </div>
@@ -53,16 +83,19 @@ const TimeLine = () => {
                 <TweetSend photoUrl={"/images/default_profile.png"}></TweetSend>
               </div>
               <div>
-                <Tweet
-                  name={"Example"}
-                  time={"12h"}
-                  content={`Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                   Lorem Ipsum has been the industry's standard dummy text ever since the 1500s`}
-                  photoUrl={"/images/default_profile.png"}
-                />
+                {tweets?.map((item) => (
+                  <Tweet
+                    key={item.id}
+                    name={item.profile.name}
+                    userName={item.profile.name}
+                    time={moment(item.created_at).fromNow(true)}
+                    content={item.body}
+                    photoUrl={"/images/default_profile.png"}
+                  />
+                ))}
               </div>
             </div>
-            <div className="flex flex-col ml-5 justify-center  w-[290px] lg:w-[350px]  ">
+            <div className="flex flex-col ml-5 w-[290px] lg:w-[350px]  ">
               <div className="flex  flex-row mt-1 justify-center items-center ">
                 <div className="flex w-full items-center h-[53px]">
                   <div
